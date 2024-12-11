@@ -1,0 +1,8 @@
+TODO list:
+
+- [ ] Body parts orientation
+- [ ] Don't allow the snake to turn to occupied cells
+- [ ] Points system and screen
+- [ ] Game over conditions
+- [ ] Fix apple spawn
+- [ ] Bricks spawn
