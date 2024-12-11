@@ -61,7 +61,7 @@ fun drawSnake(canvas: Canvas, snk: SnakeV2) {
 
     drawSnakeH(canvas, snk, snk.dir)
     drawSnakeBody(canvas, snk, snk.dir)
-    drawSnakeT2(canvas, snk, snk.dir)
+    drawSnakeT(canvas, snk, snk.dir)
 
 }
 
@@ -72,8 +72,8 @@ fun drawSnakeH(canvas: Canvas, snk: SnakeV2, d: Direction) {
 
 }
 
-//Draws the snake body
-fun drawSnakeBody(canvas: Canvas, snk: SnakeV2, d: Direction) {
+//Draws the snake body - DEPRECATED
+fun drawSnakeBodyDeprecated(canvas: Canvas, snk: SnakeV2, d: Direction) {
 
     if(snk.body.size < 2) return
 
@@ -83,9 +83,20 @@ fun drawSnakeBody(canvas: Canvas, snk: SnakeV2, d: Direction) {
 
 }
 
+//Draws the snake body
+fun drawSnakeBody(canvas: Canvas, snk: SnakeV2, d: Direction) {
 
-//Draws the snake tail
-fun drawSnakeT(canvas: Canvas, snk: SnakeV2, d: Direction) {
+    if(snk.body.size < 2) return
+
+    for (i in 1 until snk.body.size - 1) {
+        canvas.drawImage(snk.snakeImgB(snk.body, i), snk.body[i].x * CELL_SIZE, snk.body[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+    }
+
+}
+
+
+//Draws the snake tail - DEPRECATED
+fun drawSnakeTDeprecated(canvas: Canvas, snk: SnakeV2, d: Direction) {
     if(snk.body.size == 1) return
 
     when (d) {
@@ -96,7 +107,8 @@ fun drawSnakeT(canvas: Canvas, snk: SnakeV2, d: Direction) {
     }
 }
 
-fun drawSnakeT2(canvas: Canvas, snk: SnakeV2, d: Direction) {
+//Draws the snake tail
+fun drawSnakeT(canvas: Canvas, snk: SnakeV2, d: Direction) {
     if (snk.body.size == 1) return
 
     if(snk.upBorder(snk.tail()) && snk.downBorder(snk.afterTail())){

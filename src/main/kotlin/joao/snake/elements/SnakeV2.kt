@@ -98,10 +98,7 @@ data class SnakeV2(val body: List<Position> = mutableListOf<Position>(Position(W
     }
 
     fun anyBorder(pos: Position): Boolean {
-        if (upBorder(pos) || downBorder(pos) || leftBorder(pos) || rightBorder(pos)) {
-            return true
-        }
-        return false
+        return upBorder(pos) || downBorder(pos) || leftBorder(pos) || rightBorder(pos)
     }
 
     fun tail(): Position {
@@ -142,18 +139,63 @@ data class SnakeV2(val body: List<Position> = mutableListOf<Position>(Position(W
         }
     }
 
-    fun snakeImgB(p1: Position, p2: Position, p3: Position): String {
-        if (p1.x == p2.x && p2.x == p3.x) {
-            return S_B_V
-        }
-        if (p1.y == p2.y && p2.y == p3.y) {
-            return S_B_H
-        }
-        if (p1.x == p2.x && p2.x < p3.x && p1.y < p3.y) return S_B_C3 else S_B_C2
-        if (p1.x == p2.x && p2.x > p3.x && p1.y < p3.y) return S_B_C4 else S_B_C1
-        if (p1.x < p2.x && p2.x == p3.x && p2.y < p3.y) return S_B_C1 else S_B_C4
-        if (p1.x > p2.x && p2.x == p3.x && p2.y < p3.y) return S_B_C2 else S_B_C3
-        return S_B_C1
+    fun snakeImgB(list: List<Position>, index: Int): String {
+
+        val p1 = list[index-1] //front position
+        val p2 = list[index] //middle position
+        val p3 = list[index+1] //back position
+
+            if (p1.x == p2.x && p2.x == p3.x) {
+                //Horizontal
+                return S_B_V
+            }
+            if (p1.y == p2.y && p2.y == p3.y) {
+                //Vertical
+                return S_B_H
+            }
+            if (p1.x == p2.x && p2.x < p3.x && p1.y < p3.y){
+                //Left to up
+                println("Condition 1")
+                return S_B_C3
+            }
+            if (p1.x == p2.x && p2.x > p3.x && p1.y < p3.y){
+                //Right to up
+                println("Condition 2")
+                return S_B_C4
+            }
+            if (p1.x < p2.x && p2.x == p3.x && p2.y < p3.y){
+                //Up to left
+                println("Condition 3")
+                return S_B_C1
+            }
+            if (p1.x > p2.x && p2.x == p3.x && p2.y < p3.y){
+                //Up to right
+                println("Condition 4")
+                return S_B_C2
+            }
+            if(p1.x == p2.x && p2.y == p3.y && p2.x < p3.x){
+                //Left to down
+                println("Condition 5")
+                return S_B_C2
+            }
+            if(p1.x == p2.x && p2.y == p3.y && p2.x > p3.x){
+                //Right to down
+                println("Condition 6")
+                return S_B_C1
+            }
+            if(p1.x < p2.x && p1.y == p2.y && p2.x == p3.x){
+                //Down to left
+                println("Condition 7")
+                return S_B_C4
+            }
+            if(p1.x > p2.x && p1.y == p2.y && p2.x == p3.x){
+                //Down to right
+                println("Condition 8")
+                return S_B_C3
+            }
+            println("No condition")
+            return S_B_C1
+
 
     }
 
