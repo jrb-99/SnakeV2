@@ -182,6 +182,38 @@ data class SnakeV2(
             println("L-border D-L")
             return S_B_C4
         }
+        if(downBorder(p1) && downBorder(p2) && upBorder(p3) && p1.x > p3.x){
+            println("Double border up right")
+            return S_B_C2
+        }
+        if(downBorder(p1) && downBorder(p2) && upBorder(p3) && p1.x < p3.x){
+            println("Double border up left")
+            return S_B_C1
+        }
+        if(upBorder(p1) && upBorder(p2) && downBorder(p3) && p1.x > p3.x){
+            println("Double UP A")
+            return S_B_C3
+        }
+        if(upBorder(p1) && upBorder(p2) && downBorder(p3) && p1.x < p3.x){
+            println("Double UP B")
+            return S_B_C4
+        }
+        if(rightBorder(p1) && rightBorder(p2) && leftBorder(p3) && p1.y > p3.y){
+            println("Double UP B")
+            return S_B_C2
+        }
+        if(rightBorder(p1) && rightBorder(p2) && leftBorder(p3) && p1.y < p3.y){
+            println("Double UP B")
+            return S_B_C3
+        }
+        if(leftBorder(p1) && leftBorder(p2) && rightBorder(p3) && p1.y > p3.y){
+            println("Double UP B")
+            return S_B_C1
+        }
+        if(leftBorder(p1) && leftBorder(p2) && rightBorder(p3) && p1.y < p3.y){
+            println("Double UP B")
+            return S_B_C4
+        }
 
         if (p1.x == p2.x && p2.x == p3.x) {
             //Horizontal
@@ -233,7 +265,6 @@ data class SnakeV2(
         }
         println("No condition")
         return S_B_C1
-
 
     }
 
