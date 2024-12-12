@@ -5,15 +5,16 @@ const val WIDTH = 20
 const val HEIGHT = 16
 const val CELL_SIZE = 32
 const val REFRESH_RATE = 250//3000
-const val WALL_REFRESH_RATE = 5000
-//SnakeV2(mutableListOf<Position>(Position(WIDTH/2, HEIGHT/2), Position((WIDTH/2)-1, HEIGHT/2), Position((WIDTH/2)-2, HEIGHT/2), Position((WIDTH/2)-3, HEIGHT/2)), Direction.RIGHT, false, 0)
-data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = generateCornerPositions(), val apple: Position? = Position(4, 4), val score: Int = 0){
+const val WALL_REFRESH_RATE = 500
+
+data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = generateCornerPositions(), val apple: Position? = null, val score: Int = 0){
 
     //Returns the next game status, checking if the snake has hit a wall
     fun advance(): GameV2 {
+        println("$apple")
         for(w in wall){
             if(snake.nextPos(snake.body[0]) == w){
-                return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall)
+                return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall, apple, score)
             }
         }
 
@@ -21,26 +22,33 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
             //Avoid snake head to turn against its body
             if(snake.nextPos(snake.body[0]) == snake.body[1]){
                 println("OPPOSITE")
-                return GameV2(SnakeV2(snake.body, snake.dir.opposite(), false, snake.toGrow), wall)
+                return GameV2(SnakeV2(snake.body, snake.dir.opposite(), false, snake.toGrow), wall, apple, score)
             }
             if(snake.nextPos(snake.body[0]) == p){
-                return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall)
+                return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall, apple, score)
             }
 
         }
         if(snake.body[0] == apple){
-            return GameV2(SnakeV2(snake.body, snake.dir, snake.stopped, snake.toGrow + 5), wall, genApple(), score + 1)
+            return GameV2(SnakeV2(snake.body, snake.dir, snake.stopped, snake.toGrow + 5), wall, null, score + 1)
         }
         val snk = snake.move(snake.dir)
-        return GameV2(snk, wall, apple, score)
+        return GameV2(snk, wall, genApple(), score)
     }
 
 
     //Generates a new wall
     fun genWall(list: List<Position>): List<Position> {
 
-        var newList = list
-        val new_w = Position((0..WIDTH).random(), (0..HEIGHT).random())
+        val newList = list.toMutableList()
+        var new_w = Position((0..<WIDTH).random(), (0..<HEIGHT).random())
+
+        while (wall.contains(new_w) || snake.body.contains(new_w) || apple == new_w){
+
+            new_w = Position((0..<WIDTH).random(), (0..<HEIGHT).random())
+
+        }
+
         newList += new_w
 
         return newList
@@ -48,16 +56,21 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
     }
 
     //Generates a new apple
-    fun genApple(): Position? {
-        val p = Position((0..WIDTH).random(), (0..HEIGHT).random())
-        if (wall.contains(p) || snake.body.contains(p)) {
-            return genApple()
+    fun genApple(): Position {
+
+        if(apple == null){
+
+            var p = Position((0..<WIDTH).random(), (0..<HEIGHT).random())
+
+            while (wall.contains(p) || snake.body.contains(p)) {
+                p = Position((0..<WIDTH).random(), (0..<HEIGHT).random())
+            }
+
+            return p
+
         }
-        return Position((0..WIDTH).random(), (0..HEIGHT).random())
+        return apple
     }
-
-
-
 
 }//end of class GameV2
 

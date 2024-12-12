@@ -31,6 +31,10 @@ fun main(){
 
     }//onTimeProgress 250
 
+    canvas.onTimeProgress(WALL_REFRESH_RATE) {
+        iniGame = GameV2(iniGame.snake, iniGame.genWall(iniGame.wall), iniGame.apple, iniGame.score)
+    }//onTimeProgress 5000
+
 }
 
 //Draws the game status
@@ -60,8 +64,8 @@ fun drawGrid(canvas: Canvas, w: Int, h: Int, cs: Int) {
 fun drawSnake(canvas: Canvas, snk: SnakeV2) {
 
     drawSnakeH(canvas, snk, snk.dir)
-    drawSnakeBody(canvas, snk, snk.dir)
-    drawSnakeT(canvas, snk, snk.dir)
+    drawSnakeBody(canvas, snk)
+    drawSnakeT(canvas, snk)
 
 }
 
@@ -72,19 +76,8 @@ fun drawSnakeH(canvas: Canvas, snk: SnakeV2, d: Direction) {
 
 }
 
-//Draws the snake body - DEPRECATED
-fun drawSnakeBodyDeprecated(canvas: Canvas, snk: SnakeV2, d: Direction) {
-
-    if(snk.body.size < 2) return
-
-    for (i in 1 until snk.body.size - 1) {
-        canvas.drawImage(snk.snakeImgB(d), snk.body[i].x * CELL_SIZE, snk.body[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-    }
-
-}
-
 //Draws the snake body
-fun drawSnakeBody(canvas: Canvas, snk: SnakeV2, d: Direction) {
+fun drawSnakeBody(canvas: Canvas, snk: SnakeV2) {
 
     if(snk.body.size < 2) return
 
@@ -94,21 +87,8 @@ fun drawSnakeBody(canvas: Canvas, snk: SnakeV2, d: Direction) {
 
 }
 
-
-//Draws the snake tail - DEPRECATED
-fun drawSnakeTDeprecated(canvas: Canvas, snk: SnakeV2, d: Direction) {
-    if(snk.body.size == 1) return
-
-    when (d) {
-        Direction.UP -> canvas.drawImage(snk.snakeImgT(d), snk.body[snk.body.size - 1].x * CELL_SIZE, snk.body[snk.body.size - 1].y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-        Direction.DOWN -> canvas.drawImage(snk.snakeImgT(d), snk.body[snk.body.size - 1].x * CELL_SIZE, snk.body[snk.body.size - 1].y  * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-        Direction.LEFT -> canvas.drawImage(snk.snakeImgT(d), snk.body[snk.body.size - 1].x * CELL_SIZE, snk.body[snk.body.size - 1].y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-        Direction.RIGHT -> canvas.drawImage(snk.snakeImgT(d), snk.body[snk.body.size - 1].x * CELL_SIZE, snk.body[snk.body.size - 1].y * CELL_SIZE, CELL_SIZE, CELL_SIZE)
-    }
-}
-
 //Draws the snake tail
-fun drawSnakeT(canvas: Canvas, snk: SnakeV2, d: Direction) {
+fun drawSnakeT(canvas: Canvas, snk: SnakeV2) {
     if (snk.body.size == 1) return
 
     if(snk.upBorder(snk.tail()) && snk.downBorder(snk.afterTail())){

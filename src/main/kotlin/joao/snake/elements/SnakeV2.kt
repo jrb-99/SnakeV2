@@ -102,10 +102,6 @@ data class SnakeV2(
         return pos.y >= HEIGHT - 1
     }
 
-    fun anyBorder(pos: Position): Boolean {
-        return upBorder(pos) || downBorder(pos) || leftBorder(pos) || rightBorder(pos)
-    }
-
     fun tail(): Position {
         return body[body.size - 1]
     }
@@ -135,15 +131,6 @@ data class SnakeV2(
     }
 
     //Returns the image of the snake body based on the direction
-    fun snakeImgB(d: Direction): String {
-        when (d) {
-            Direction.UP -> return S_B_V
-            Direction.DOWN -> return S_B_V
-            Direction.LEFT -> return S_B_H
-            Direction.RIGHT -> return S_B_H
-        }
-    }
-
     fun snakeImgB(list: List<Position>, index: Int): String {
 
         val p1 = list[index - 1] //front position

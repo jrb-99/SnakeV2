@@ -1,14 +1,14 @@
 TODO list:
 
-- [ ] Body parts orientation
+- [X] Body parts orientation
 - [ ] Don't allow the snake to turn to occupied cells
 - [ ] Points system and screen
 - [ ] Game over conditions
-- [ ] Fix apple spawn
-- [ ] Bricks spawn
+- [X] Fix apple spawn
+- [X] Bricks spawn
 
 
-BODY METHOD
+BODY METHOD WITH BUGS:
 fun snakeImgB(list: List<Position>, index: Int): String {
 
             val p1 = list[index-1] //front position
