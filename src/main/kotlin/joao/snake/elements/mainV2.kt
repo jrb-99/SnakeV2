@@ -88,6 +88,7 @@ fun drawSnakeBody(canvas: Canvas, snk: SnakeV2) {
 }
 
 //Draws the snake tail
+//TODO -> move this logic to Snake
 fun drawSnakeT(canvas: Canvas, snk: SnakeV2) {
     if (snk.body.size == 1) return
 
