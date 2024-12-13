@@ -39,6 +39,7 @@ fun main(){
         println(iniGame.snake.body.size)
         println(iniGame.snake.stopped)
         println(iniGame.snake.toGrow)
+        println(iniGame.score)
         iniGame = iniGame.advance()
         drawGame(canvas, iniGame)
 

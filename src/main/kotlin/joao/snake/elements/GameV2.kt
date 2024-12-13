@@ -6,6 +6,8 @@ const val HEIGHT = 16
 const val CELL_SIZE = 32
 const val REFRESH_RATE = 250//3000
 const val WALL_REFRESH_RATE = 5000
+const val GROW_RATE = 5
+const val PPA = 1 //PPA: Points per Apple
 
 data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = generateCornerPositions(), val apple: Position? = null, val score: Int = 0){
 
@@ -30,7 +32,7 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
 
         }
         if(snake.body[0] == apple){
-            return GameV2(SnakeV2(snake.body, snake.dir, snake.stopped, snake.toGrow + 5), wall, null, score + 1)
+            return GameV2(SnakeV2(snake.body, snake.dir, snake.stopped, snake.toGrow + GROW_RATE), wall, null, score + PPA)
         }
         val snk = snake.move(snake.dir)
         return GameV2(snk, wall, genApple(), score)
