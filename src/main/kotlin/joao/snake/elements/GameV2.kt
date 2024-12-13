@@ -5,7 +5,7 @@ const val WIDTH = 20
 const val HEIGHT = 16
 const val CELL_SIZE = 32
 const val REFRESH_RATE = 250//3000
-const val WALL_REFRESH_RATE = 500
+const val WALL_REFRESH_RATE = 5000
 
 data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = generateCornerPositions(), val apple: Position? = null, val score: Int = 0){
 
@@ -13,18 +13,18 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
     fun advance(): GameV2 {
         println("$apple")
         for(w in wall){
-            if(snake.nextPos(snake.body[0]) == w){
+            if(snake.nextPos(snake.body[0], snake.dir) == w){
                 return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall, apple, score)
             }
         }
 
         for(p in snake.body.subList(1, snake.body.size)){
             //Avoid snake head to turn against its body
-            if(snake.nextPos(snake.body[0]) == snake.body[1]){
+            if(snake.nextPos(snake.body[0], snake.dir) == snake.body[1]){
                 println("OPPOSITE")
                 return GameV2(SnakeV2(snake.body, snake.dir.opposite(), false, snake.toGrow), wall, apple, score)
             }
-            if(snake.nextPos(snake.body[0]) == p){
+            if(snake.nextPos(snake.body[0], snake.dir) == p){
                 return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall, apple, score)
             }
 
@@ -34,6 +34,11 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
         }
         val snk = snake.move(snake.dir)
         return GameV2(snk, wall, genApple(), score)
+    }
+
+    fun isDirectionChangeAllowed(newDirection: Direction): Boolean {
+        val nextPosition = snake.nextPos(snake.body[0], newDirection)
+        return !snake.body.contains(nextPosition) && !wall.contains(nextPosition)
     }
 
 

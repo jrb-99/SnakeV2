@@ -1,11 +1,13 @@
 TODO list:
 
 - [X] Body parts orientation
-- [ ] Don't allow the snake to turn to occupied cells
+- [X] Don't allow the snake to turn to occupied cells
 - [ ] Points system and screen
 - [ ] Game over conditions
 - [X] Fix apple spawn
 - [X] Bricks spawn
+- [ ] Fix snake stopping when eating apple
+- [ ] Clean all the unused code
 
 
 BODY METHOD WITH BUGS:

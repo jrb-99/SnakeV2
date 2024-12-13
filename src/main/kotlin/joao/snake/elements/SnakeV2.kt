@@ -32,7 +32,7 @@ data class SnakeV2(
         if (toGrow > 0) {
             for (i in 0 until body.size + 1) {
                 if (i == 0) {
-                    newBody.add(nextPos(body[i]))
+                    newBody.add(nextPos(body[i], dir))
                 } else {
                     newBody.add(body[i - 1])
                 }
@@ -42,7 +42,7 @@ data class SnakeV2(
 
         for (i in 0 until body.size) {
             if (i == 0) {
-                newBody.add(nextPos(body[i]))
+                newBody.add(nextPos(body[i], dir))
             } else {
                 newBody.add(body[i - 1])
             }
@@ -50,19 +50,34 @@ data class SnakeV2(
         return SnakeV2(newBody, d, false, toGrow)
     }
 
-    fun grownList(): List<Position> {
-        val newBody = mutableListOf<Position>()
-        if (body.size == 1) {
-            newBody.add(body[0])
-            newBody.add(prevPos(body[0]))
-            return newBody
-
+    fun leftPos(d: Direction): Position{
+        return when(d){
+            Direction.UP -> if(leftBorder(body[0])) body[0].resetXL() else body[0].left()
+            Direction.DOWN -> if(leftBorder(body[0])) body[0].resetXL() else body[0].left()
+            Direction.LEFT -> if(downBorder(body[0])) body[0].resetYU() else body[0].down()
+            Direction.RIGHT -> if(upBorder(body[0])) body[0].resetYD() else body[0].up()
         }
-        return newBody + prevPos(body[0]) + body.subList(2, body.lastIndexOf(body.last()))
-
     }
 
-    //Returns the next position of the snake
+    fun rightPos(d: Direction): Position{
+        return when(d){
+            Direction.UP -> if(rightBorder(body[0])) body[0].resetXR() else body[0].right()
+            Direction.DOWN -> if(rightBorder(body[0])) body[0].resetXR() else body[0].right()
+            Direction.LEFT -> if(upBorder(body[0])) body[0].resetYD() else body[0].up()
+            Direction.RIGHT -> if(downBorder(body[0])) body[0].resetYU() else body[0].down()
+        }
+    }
+
+    fun nextPos(p: Position, direction: Direction): Position {
+        return when (direction) {
+            Direction.UP -> if (upBorder(p)) p.resetYD() else p.up()
+            Direction.DOWN -> if (downBorder(p)) p.resetYU() else p.down()
+            Direction.LEFT -> if (leftBorder(p)) p.resetXL() else p.left()
+            Direction.RIGHT -> if (rightBorder(p)) p.resetXR() else p.right()
+        }
+    }
+
+    /*Returns the next position of the snake
     fun nextPos(p: Position): Position {
         return when (dir) {
             Direction.UP -> if (upBorder(p)) p.resetYD() else p.up()
@@ -70,7 +85,7 @@ data class SnakeV2(
             Direction.LEFT -> if (leftBorder(p)) p.resetXL() else p.left()
             Direction.RIGHT -> if (rightBorder(p)) p.resetXR() else p.right()
         }
-    }
+    }*/
 
     //Returns the previous position of a part
     fun prevPos(p: Position): Position {

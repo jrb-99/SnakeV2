@@ -9,16 +9,30 @@ fun main(){
 
     drawGame(canvas, iniGame)
 
-    //Listen to key events and update the snake position if allowed
+    /*Listen to key events and update the snake position if allowed
     canvas.onKeyPressed { k ->
         val newSnk = when {
-            k.code == UP_CODE && iniGame.snake.dir != Direction.DOWN -> SnakeV2(iniGame.snake.body, Direction.UP, iniGame.snake.stopped, iniGame.snake.toGrow)
+            k.code == UP_CODE && iniGame.snake.dir != Direction.DOWN ->  SnakeV2(iniGame.snake.body, Direction.UP, iniGame.snake.stopped, iniGame.snake.toGrow)
             k.code == DOWN_CODE && iniGame.snake.dir != Direction.UP -> SnakeV2(iniGame.snake.body, Direction.DOWN, iniGame.snake.stopped, iniGame.snake.toGrow)
             k.code == LEFT_CODE && iniGame.snake.dir != Direction.RIGHT -> SnakeV2(iniGame.snake.body, Direction.LEFT, iniGame.snake.stopped, iniGame.snake.toGrow)
             k.code == RIGHT_CODE && iniGame.snake.dir != Direction.LEFT -> SnakeV2(iniGame.snake.body, Direction.RIGHT, iniGame.snake.stopped, iniGame.snake.toGrow)
             else -> iniGame.snake
         }
         iniGame = GameV2(newSnk, iniGame.wall, iniGame.apple, iniGame.score)
+    }//onKeyPressed*/
+
+    //Listen to key events and update the snake position if allowed
+    canvas.onKeyPressed { k ->
+        val newDirection = when (k.code) {
+            UP_CODE -> Direction.UP
+            DOWN_CODE -> Direction.DOWN
+            LEFT_CODE -> Direction.LEFT
+            RIGHT_CODE -> Direction.RIGHT
+            else -> iniGame.snake.dir
+        }
+        if (iniGame.isDirectionChangeAllowed(newDirection) && iniGame.snake.dir.opposite() != newDirection) {
+            iniGame = GameV2(SnakeV2(iniGame.snake.body, newDirection, iniGame.snake.stopped, iniGame.snake.toGrow), iniGame.wall, iniGame.apple, iniGame.score)
+        }
     }//onKeyPressed
 
     canvas.onTimeProgress(REFRESH_RATE) {
