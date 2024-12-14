@@ -1,6 +1,6 @@
 package joao.snake.elements
 
-//Game constants
+//Game constants (Can be an enum)
 const val WIDTH = 20
 const val HEIGHT = 16
 const val SCOREBOARD_HEIGHT = 2
@@ -14,43 +14,63 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
 
     //Returns the next game status, checking if the snake has hit a wall
     fun advance(): GameV2 {
-        //println("$apple")
-        println(snake.surroundings())
-        for(w in wall){
-            if(snake.nextPos(snake.body[0], snake.dir) == w){
-                return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall, apple, score)
-            }
+
+        //Check collision with wall
+        if(wall.contains(snake.nextPos(snake.body[0], snake.dir))){
+            return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall, apple, score)
         }
 
+        //Check collision with snake body
         if(snake.body.subList(1, snake.body.size).contains(snake.nextPos(snake.body[0], snake.dir))){
             return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall, apple, score)
         }
+
+        //Return growing snake or current snake
+        val snk = snakeType().move(snake.dir)
+
+        //Return game status if snake eats an apple
         if(snake.body[0] == apple){
-            return GameV2(SnakeV2(snake.body, snake.dir, snake.stopped, snake.toGrow + GROW_RATE), wall, null, score + PPA)
+            return GameV2(snk, wall, null, score + PPA)
         }
-        val snk = snake.move(snake.dir)
+
+        //Return game status if snake doesn't eat any apple
         return GameV2(snk, wall, genApple(), score)
     }
 
+
+    //Returns snake type (has eaten apple or not)
+    fun snakeType(): SnakeV2{
+
+        if(snake.body[0] == apple){
+            return SnakeV2(snake.body, snake.dir, snake.stopped, snake.toGrow + GROW_RATE)
+        }
+        return snake
+
+    }
+
+    //Returns true if the snake can change direction
     fun isDirectionChangeAllowed(newDirection: Direction): Boolean {
         val nextPosition = snake.nextPos(snake.body[0], newDirection)
         return !snake.body.contains(nextPosition) && !wall.contains(nextPosition)
     }
 
 
+    //Returns the end game string based on the score
     fun endGameString(): String{
-        if(gameOver() && score > 10) {
+        if(gameOver() && score >= 11) {
             return "You won"
-        } else if(gameOver() && score < 10){
+        } else if(gameOver() && score < 11){
             return "You lost"
         }
         return ""
     }
 
+    //Returns true if the game is over (snake stopped and can't move)
     fun gameOver(): Boolean {
         return snake.stopped && cantMove()
     }
 
+    //Returns true if the snake can't move
     fun cantMove(): Boolean {
         val occupied = wall + snake.body
         for (p in snake.surroundings()) {
@@ -98,7 +118,7 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
 
 }//end of class GameV2
 
-
+//Utility function to generate corners instead adding them manually
 fun generateCornerPositions(): List<Position> {
     return listOf(
         // Top-left corner

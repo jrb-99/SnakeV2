@@ -25,9 +25,6 @@ fun main(){
 
     canvas.onTimeProgress(REFRESH_RATE) {
 
-        //println(iniGame.snake.body.size)
-        //println(iniGame.snake.stopped)
-        //println(iniGame.snake.toGrow)
         iniGame = iniGame.advance()
         drawGame(canvas, iniGame)
 
@@ -64,6 +61,7 @@ fun drawGrid(canvas: Canvas, w: Int, h: Int, cs: Int) {
 
 }
 
+//Draws the scoreboard
 fun drawScoreBoard(canvas: Canvas, game: GameV2) {
     canvas.drawRect(0, HEIGHT * CELL_SIZE, WIDTH * CELL_SIZE, SCOREBOARD_HEIGHT * CELL_SIZE, WHITE, 5)
     canvas.drawRect(0, HEIGHT * CELL_SIZE, WIDTH * CELL_SIZE, SCOREBOARD_HEIGHT * CELL_SIZE, BLACK)

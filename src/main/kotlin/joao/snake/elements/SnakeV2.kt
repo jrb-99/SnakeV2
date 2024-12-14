@@ -1,6 +1,6 @@
 package joao.snake.elements
 
-//Snake constants
+//Snake constants (Can be an enum)
 const val APPLE = "snake|0,192,64,64"
 const val BRICKS = "bricks.png"
 const val S_H_UP = "snake|192,0,64,64"
@@ -50,6 +50,7 @@ data class SnakeV2(
         return SnakeV2(newBody, d, false, toGrow)
     }
 
+    //Returns the left position of the snake head based on the direction
     fun leftPos(d: Direction): Position{
         return when(d){
             Direction.UP -> if(leftBorder(body[0])) body[0].resetXL() else body[0].left()
@@ -59,6 +60,7 @@ data class SnakeV2(
         }
     }
 
+    //Returns the right position of the snake head based on the direction
     fun rightPos(d: Direction): Position{
         return when(d){
             Direction.UP -> if(rightBorder(body[0])) body[0].resetXR() else body[0].right()
@@ -68,6 +70,7 @@ data class SnakeV2(
         }
     }
 
+    //Returns the next position of the snake head based on the direction
     fun nextPos(p: Position, direction: Direction): Position {
         return when (direction) {
             Direction.UP -> if (upBorder(p)) p.resetYD() else p.up()
@@ -77,6 +80,7 @@ data class SnakeV2(
         }
     }
 
+    //Returns a list with the positions surrounding the snake head
     fun surroundings(): List<Position>{
 
         return mutableListOf<Position>(leftPos(dir),rightPos(dir), nextPos(body[0], dir))
@@ -131,7 +135,7 @@ data class SnakeV2(
         }
     }
 
-    //Returns the image of the snake body based on the direction
+    //Returns the image of the snake body based on the direction (way too verbose, should be refactored)
     fun snakeImgB(list: List<Position>, index: Int): String {
 
         val p1 = list[index - 1] //front position
@@ -139,67 +143,51 @@ data class SnakeV2(
         val p3 = list[index + 1] //back position
 
         if(downBorder(p1) && upBorder(p2) && upBorder(p3) && p1.x < p3.x){
-            //println("U-border L-U")
             return S_B_C3
         }
         if(downBorder(p1) && upBorder(p2) && upBorder(p3) && p1.x > p3.x){
-            //println("U-border R-U")
             return S_B_C4
         }
         if(leftBorder(p1) && rightBorder(p2) && rightBorder(p3) && p1.y > p3.y){
-            //println("R-border D-R")
             return S_B_C3
         }
         if(leftBorder(p1) && rightBorder(p2) && rightBorder(p3) && p1.y < p3.y){
-            //println("R-border U-R")
             return S_B_C2
         }
         if(upBorder(p1) && downBorder(p2) && downBorder(p3) && p1.x < p3.x){
-            //println("D-border L-D")
             return S_B_C2
         }
         if(upBorder(p1) && downBorder(p2) && downBorder(p3) && p1.x > p3.x){
-            //println("D-border R-D")
             return S_B_C1
         }
         if(rightBorder(p1) && leftBorder(p2) && leftBorder(p3) && p1.y < p3.y){
-            //println("L-border U-L")
             return S_B_C1
         }
         if(rightBorder(p1) && leftBorder(p2) && leftBorder(p3) && p1.y > p3.y){
-            //println("L-border D-L")
             return S_B_C4
         }
         if(downBorder(p1) && downBorder(p2) && upBorder(p3) && p1.x > p3.x){
-            //println("Double border up right")
             return S_B_C2
         }
         if(downBorder(p1) && downBorder(p2) && upBorder(p3) && p1.x < p3.x){
-            //println("Double border up left")
             return S_B_C1
         }
         if(upBorder(p1) && upBorder(p2) && downBorder(p3) && p1.x > p3.x){
-            //println("Double UP A")
             return S_B_C3
         }
         if(upBorder(p1) && upBorder(p2) && downBorder(p3) && p1.x < p3.x){
-            //println("Double UP B")
             return S_B_C4
         }
         if(rightBorder(p1) && rightBorder(p2) && leftBorder(p3) && p1.y > p3.y){
-            //println("Double UP B")
             return S_B_C2
         }
         if(rightBorder(p1) && rightBorder(p2) && leftBorder(p3) && p1.y < p3.y){
-            //println("Double UP B")
             return S_B_C3
         }
         if(leftBorder(p1) && leftBorder(p2) && rightBorder(p3) && p1.y > p3.y){
-            //println("Double UP B")
             return S_B_C1
         }
         if(leftBorder(p1) && leftBorder(p2) && rightBorder(p3) && p1.y < p3.y){
-            //println("Double UP B")
             return S_B_C4
         }
 
@@ -212,46 +200,29 @@ data class SnakeV2(
             return S_B_H
         }
         if (p1.x == p2.x && p2.x < p3.x && p1.y < p3.y) {
-            //Left to up
-            //println("Condition 1")
             return S_B_C3
         }
         if (p1.x == p2.x && p2.x > p3.x && p1.y < p3.y) {
-            //Right to up
-            //println("Condition 2")
             return S_B_C4
         }
         if (p1.x < p2.x && p2.x == p3.x && p2.y < p3.y) {
-            //Up to left
-            //println("Condition 3")
             return S_B_C1
         }
         if (p1.x > p2.x && p2.x == p3.x && p2.y < p3.y) {
-            //Up to right
-            //println("Condition 4")
             return S_B_C2
         }
         if (p1.x == p2.x && p2.y == p3.y && p2.x < p3.x) {
-            //Left to down
-            //println("Condition 5")
             return S_B_C2
         }
         if (p1.x == p2.x && p2.y == p3.y && p2.x > p3.x) {
-            //Right to down
-            //println("Condition 6")
             return S_B_C1
         }
         if (p1.x < p2.x && p1.y == p2.y && p2.x == p3.x) {
-            //Down to left
-            //println("Condition 7")
             return S_B_C4
         }
         if (p1.x > p2.x && p1.y == p2.y && p2.x == p3.x) {
-            //Down to right
-            //println("Condition 8")
             return S_B_C3
         }
-        //println("No condition")
         return S_B_C1
 
     }

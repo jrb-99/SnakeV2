@@ -6,12 +6,13 @@ TODO list:
 - [X] Game over conditions
 - [X] Fix apple spawn
 - [X] Bricks spawn
-- [ ] Fix snake stopping when eating apple
-- [ ] Clean all the unused code
-- [ ] Comment function explanation
+- [X] Fix snake stopping when eating apple
+- [X] Clean all the unused code
+- [X] Comment function explanation
 
 
 FUNCTIONS WITH BUGS:
+
 fun snakeImgB(list: List<Position>, index: Int): String {
 
             val p1 = list[index-1] //front position
