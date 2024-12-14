@@ -2,15 +2,16 @@ TODO list:
 
 - [X] Body parts orientation
 - [X] Don't allow the snake to turn to occupied cells
-- [ ] Points system and screen
-- [ ] Game over conditions
+- [X] Points system and screen
+- [X] Game over conditions
 - [X] Fix apple spawn
 - [X] Bricks spawn
 - [ ] Fix snake stopping when eating apple
 - [ ] Clean all the unused code
+- [ ] Comment function explanation
 
 
-BODY METHOD WITH BUGS:
+FUNCTIONS WITH BUGS:
 fun snakeImgB(list: List<Position>, index: Int): String {
 
             val p1 = list[index-1] //front position
@@ -62,4 +63,16 @@ fun snakeImgB(list: List<Position>, index: Int): String {
             println("No condition")
             return S_B_C1
 
+    }
+
+###
+
+fun cantMove(): Boolean{
+        val occupied = wall + snake.body
+        for(p in snake.surroundings()){
+
+            return occupied.contains(p)
+
+        }
+        return false
     }

@@ -5,21 +5,9 @@ import pt.isel.canvas.*
 fun main(){
 
     var iniGame = GameV2()
-    val canvas = Canvas(WIDTH * CELL_SIZE, HEIGHT * CELL_SIZE, BLACK)
+    val canvas = Canvas(WIDTH * CELL_SIZE, (HEIGHT + SCOREBOARD_HEIGHT) * CELL_SIZE, BLACK)
 
     drawGame(canvas, iniGame)
-
-    /*Listen to key events and update the snake position if allowed
-    canvas.onKeyPressed { k ->
-        val newSnk = when {
-            k.code == UP_CODE && iniGame.snake.dir != Direction.DOWN ->  SnakeV2(iniGame.snake.body, Direction.UP, iniGame.snake.stopped, iniGame.snake.toGrow)
-            k.code == DOWN_CODE && iniGame.snake.dir != Direction.UP -> SnakeV2(iniGame.snake.body, Direction.DOWN, iniGame.snake.stopped, iniGame.snake.toGrow)
-            k.code == LEFT_CODE && iniGame.snake.dir != Direction.RIGHT -> SnakeV2(iniGame.snake.body, Direction.LEFT, iniGame.snake.stopped, iniGame.snake.toGrow)
-            k.code == RIGHT_CODE && iniGame.snake.dir != Direction.LEFT -> SnakeV2(iniGame.snake.body, Direction.RIGHT, iniGame.snake.stopped, iniGame.snake.toGrow)
-            else -> iniGame.snake
-        }
-        iniGame = GameV2(newSnk, iniGame.wall, iniGame.apple, iniGame.score)
-    }//onKeyPressed*/
 
     //Listen to key events and update the snake position if allowed
     canvas.onKeyPressed { k ->
@@ -36,10 +24,10 @@ fun main(){
     }//onKeyPressed
 
     canvas.onTimeProgress(REFRESH_RATE) {
-        println(iniGame.snake.body.size)
-        println(iniGame.snake.stopped)
-        println(iniGame.snake.toGrow)
-        println(iniGame.score)
+
+        //println(iniGame.snake.body.size)
+        //println(iniGame.snake.stopped)
+        //println(iniGame.snake.toGrow)
         iniGame = iniGame.advance()
         drawGame(canvas, iniGame)
 
@@ -60,6 +48,7 @@ fun drawGame(canvas: Canvas, game: GameV2) {
     drawSnake(canvas, game.snake)
     drawWall(canvas, game.wall)
     drawApple(canvas, game.apple)
+    drawScoreBoard(canvas, game)
 
 }
 
@@ -73,6 +62,17 @@ fun drawGrid(canvas: Canvas, w: Int, h: Int, cs: Int) {
         }
     }
 
+}
+
+fun drawScoreBoard(canvas: Canvas, game: GameV2) {
+    canvas.drawRect(0, HEIGHT * CELL_SIZE, WIDTH * CELL_SIZE, SCOREBOARD_HEIGHT * CELL_SIZE, WHITE, 5)
+    canvas.drawRect(0, HEIGHT * CELL_SIZE, WIDTH * CELL_SIZE, SCOREBOARD_HEIGHT * CELL_SIZE, BLACK)
+
+    canvas.drawText(0, (HEIGHT + (SCOREBOARD_HEIGHT/2)) * CELL_SIZE, "Score: ${game.score}", RED, 20)
+    canvas.drawText(3 * CELL_SIZE, (HEIGHT + (SCOREBOARD_HEIGHT/2)) * CELL_SIZE, "Snake lenght: ${game.snake.body.size}", WHITE, 20)
+    canvas.drawText(9 * CELL_SIZE, (HEIGHT + (SCOREBOARD_HEIGHT/2)) * CELL_SIZE, game.endGameString(), YELLOW, 20)
+
+    //timer(canvas)
 }
 
 //Draws the snake

@@ -3,6 +3,7 @@ package joao.snake.elements
 //Game constants
 const val WIDTH = 20
 const val HEIGHT = 16
+const val SCOREBOARD_HEIGHT = 2
 const val CELL_SIZE = 32
 const val REFRESH_RATE = 250//3000
 const val WALL_REFRESH_RATE = 5000
@@ -13,23 +14,16 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
 
     //Returns the next game status, checking if the snake has hit a wall
     fun advance(): GameV2 {
-        println("$apple")
+        //println("$apple")
+        println(snake.surroundings())
         for(w in wall){
             if(snake.nextPos(snake.body[0], snake.dir) == w){
                 return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall, apple, score)
             }
         }
 
-        for(p in snake.body.subList(1, snake.body.size)){
-            //Avoid snake head to turn against its body
-            if(snake.nextPos(snake.body[0], snake.dir) == snake.body[1]){
-                println("OPPOSITE")
-                return GameV2(SnakeV2(snake.body, snake.dir.opposite(), false, snake.toGrow), wall, apple, score)
-            }
-            if(snake.nextPos(snake.body[0], snake.dir) == p){
-                return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall, apple, score)
-            }
-
+        if(snake.body.subList(1, snake.body.size).contains(snake.nextPos(snake.body[0], snake.dir))){
+            return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall, apple, score)
         }
         if(snake.body[0] == apple){
             return GameV2(SnakeV2(snake.body, snake.dir, snake.stopped, snake.toGrow + GROW_RATE), wall, null, score + PPA)
@@ -43,6 +37,29 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
         return !snake.body.contains(nextPosition) && !wall.contains(nextPosition)
     }
 
+
+    fun endGameString(): String{
+        if(gameOver() && score > 10) {
+            return "You won"
+        } else if(gameOver() && score < 10){
+            return "You lost"
+        }
+        return ""
+    }
+
+    fun gameOver(): Boolean {
+        return snake.stopped && cantMove()
+    }
+
+    fun cantMove(): Boolean {
+        val occupied = wall + snake.body
+        for (p in snake.surroundings()) {
+            if (!occupied.contains(p)) {
+                return false
+            }
+        }
+        return true
+    }
 
     //Generates a new wall
     fun genWall(list: List<Position>): List<Position> {

@@ -77,24 +77,10 @@ data class SnakeV2(
         }
     }
 
-    /*Returns the next position of the snake
-    fun nextPos(p: Position): Position {
-        return when (dir) {
-            Direction.UP -> if (upBorder(p)) p.resetYD() else p.up()
-            Direction.DOWN -> if (downBorder(p)) p.resetYU() else p.down()
-            Direction.LEFT -> if (leftBorder(p)) p.resetXL() else p.left()
-            Direction.RIGHT -> if (rightBorder(p)) p.resetXR() else p.right()
-        }
-    }*/
+    fun surroundings(): List<Position>{
 
-    //Returns the previous position of a part
-    fun prevPos(p: Position): Position {
-        return when (dir) {
-            Direction.UP -> if (downBorder(p)) p.resetYU() else p.down()
-            Direction.DOWN -> if (upBorder(p)) p.resetYD() else p.up()
-            Direction.LEFT -> if (rightBorder(p)) p.resetXR() else p.right()
-            Direction.RIGHT -> if (leftBorder(p)) p.resetXL() else p.left()
-        }
+        return mutableListOf<Position>(leftPos(dir),rightPos(dir), nextPos(body[0], dir))
+
     }
 
     //Returns true if the snake is in the left border
@@ -153,67 +139,67 @@ data class SnakeV2(
         val p3 = list[index + 1] //back position
 
         if(downBorder(p1) && upBorder(p2) && upBorder(p3) && p1.x < p3.x){
-            println("U-border L-U")
+            //println("U-border L-U")
             return S_B_C3
         }
         if(downBorder(p1) && upBorder(p2) && upBorder(p3) && p1.x > p3.x){
-            println("U-border R-U")
+            //println("U-border R-U")
             return S_B_C4
         }
         if(leftBorder(p1) && rightBorder(p2) && rightBorder(p3) && p1.y > p3.y){
-            println("R-border D-R")
+            //println("R-border D-R")
             return S_B_C3
         }
         if(leftBorder(p1) && rightBorder(p2) && rightBorder(p3) && p1.y < p3.y){
-            println("R-border U-R")
+            //println("R-border U-R")
             return S_B_C2
         }
         if(upBorder(p1) && downBorder(p2) && downBorder(p3) && p1.x < p3.x){
-            println("D-border L-D")
+            //println("D-border L-D")
             return S_B_C2
         }
         if(upBorder(p1) && downBorder(p2) && downBorder(p3) && p1.x > p3.x){
-            println("D-border R-D")
+            //println("D-border R-D")
             return S_B_C1
         }
         if(rightBorder(p1) && leftBorder(p2) && leftBorder(p3) && p1.y < p3.y){
-            println("L-border U-L")
+            //println("L-border U-L")
             return S_B_C1
         }
         if(rightBorder(p1) && leftBorder(p2) && leftBorder(p3) && p1.y > p3.y){
-            println("L-border D-L")
+            //println("L-border D-L")
             return S_B_C4
         }
         if(downBorder(p1) && downBorder(p2) && upBorder(p3) && p1.x > p3.x){
-            println("Double border up right")
+            //println("Double border up right")
             return S_B_C2
         }
         if(downBorder(p1) && downBorder(p2) && upBorder(p3) && p1.x < p3.x){
-            println("Double border up left")
+            //println("Double border up left")
             return S_B_C1
         }
         if(upBorder(p1) && upBorder(p2) && downBorder(p3) && p1.x > p3.x){
-            println("Double UP A")
+            //println("Double UP A")
             return S_B_C3
         }
         if(upBorder(p1) && upBorder(p2) && downBorder(p3) && p1.x < p3.x){
-            println("Double UP B")
+            //println("Double UP B")
             return S_B_C4
         }
         if(rightBorder(p1) && rightBorder(p2) && leftBorder(p3) && p1.y > p3.y){
-            println("Double UP B")
+            //println("Double UP B")
             return S_B_C2
         }
         if(rightBorder(p1) && rightBorder(p2) && leftBorder(p3) && p1.y < p3.y){
-            println("Double UP B")
+            //println("Double UP B")
             return S_B_C3
         }
         if(leftBorder(p1) && leftBorder(p2) && rightBorder(p3) && p1.y > p3.y){
-            println("Double UP B")
+            //println("Double UP B")
             return S_B_C1
         }
         if(leftBorder(p1) && leftBorder(p2) && rightBorder(p3) && p1.y < p3.y){
-            println("Double UP B")
+            //println("Double UP B")
             return S_B_C4
         }
 
@@ -227,45 +213,45 @@ data class SnakeV2(
         }
         if (p1.x == p2.x && p2.x < p3.x && p1.y < p3.y) {
             //Left to up
-            println("Condition 1")
+            //println("Condition 1")
             return S_B_C3
         }
         if (p1.x == p2.x && p2.x > p3.x && p1.y < p3.y) {
             //Right to up
-            println("Condition 2")
+            //println("Condition 2")
             return S_B_C4
         }
         if (p1.x < p2.x && p2.x == p3.x && p2.y < p3.y) {
             //Up to left
-            println("Condition 3")
+            //println("Condition 3")
             return S_B_C1
         }
         if (p1.x > p2.x && p2.x == p3.x && p2.y < p3.y) {
             //Up to right
-            println("Condition 4")
+            //println("Condition 4")
             return S_B_C2
         }
         if (p1.x == p2.x && p2.y == p3.y && p2.x < p3.x) {
             //Left to down
-            println("Condition 5")
+            //println("Condition 5")
             return S_B_C2
         }
         if (p1.x == p2.x && p2.y == p3.y && p2.x > p3.x) {
             //Right to down
-            println("Condition 6")
+            //println("Condition 6")
             return S_B_C1
         }
         if (p1.x < p2.x && p1.y == p2.y && p2.x == p3.x) {
             //Down to left
-            println("Condition 7")
+            //println("Condition 7")
             return S_B_C4
         }
         if (p1.x > p2.x && p1.y == p2.y && p2.x == p3.x) {
             //Down to right
-            println("Condition 8")
+            //println("Condition 8")
             return S_B_C3
         }
-        println("No condition")
+        //println("No condition")
         return S_B_C1
 
     }
