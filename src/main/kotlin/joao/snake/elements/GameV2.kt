@@ -1,5 +1,8 @@
 package joao.snake.elements
 
+import pt.isel.canvas.playSound
+import java.io.File
+
 //Game constants (Can be an enum)
 const val WIDTH = 20
 const val HEIGHT = 16
@@ -10,18 +13,20 @@ const val WALL_REFRESH_RATE = 5000
 const val GROW_RATE = 5
 const val PPA = 1 //PPA: Points per Apple
 
-data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = generateCornerPositions(), val apple: Position? = null, val score: Int = 0){
+data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = generateCornerPositions(), val apple: Position? = null, val score: Int = 0, val highestScore: Int = readHighestScore()){
 
     //Returns the next game status, checking if the snake has hit a wall
     fun advance(): GameV2 {
 
         //Check collision with wall
         if(wall.contains(snake.nextPos(snake.body[0], snake.dir))){
+            playSound("snd/smb_bump")
             return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall, apple, score)
         }
 
         //Check collision with snake body
         if(snake.body.subList(1, snake.body.size).contains(snake.nextPos(snake.body[0], snake.dir))){
+            playSound("snd/smb_bump")
             return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall, apple, score)
         }
 
@@ -42,6 +47,7 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
     fun snakeType(): SnakeV2{
 
         if(snake.body[0] == apple){
+            playSound("snd/smb_powerup")
             return SnakeV2(snake.body, snake.dir, snake.stopped, snake.toGrow + GROW_RATE)
         }
         return snake
@@ -51,6 +57,10 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
     //Returns true if the snake can change direction
     fun isDirectionChangeAllowed(newDirection: Direction): Boolean {
         val nextPosition = snake.nextPos(snake.body[0], newDirection)
+        if(!snake.body.contains(nextPosition) && !wall.contains(nextPosition)){
+            return true
+        }
+        playSound("snd/smb_bump")
         return !snake.body.contains(nextPosition) && !wall.contains(nextPosition)
     }
 
@@ -65,9 +75,32 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
         return ""
     }
 
+    //Plays a sound based on the end game result
+    fun endGameSound(){
+        if(gameOver() && score >= highestScore){
+            playSound("snd/smb_world_clear")
+        }else if(gameOver() && score >= 11) {
+            playSound("snd/smb_stage_clear")
+        }else if(gameOver() && score < 11){
+            playSound("snd/smb_gameover")
+        }
+    }
+
     //Returns true if the game is over (snake stopped and can't move)
     fun gameOver(): Boolean {
+        writeHighScore(highestScore, score)
         return snake.stopped && cantMove()
+    }
+
+    //Writes the high score to a file
+    fun writeHighScore(highScore: Int ,score: Int){
+        val file = File("src/main/resources/highScore.txt")
+        if (!file.exists()) {
+            file.createNewFile()
+        }
+        if(highScore < score){
+            File("src/main/resources/highScore.txt").writeText(score.toString())
+        }
     }
 
     //Returns true if the snake can't move
@@ -81,7 +114,7 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
         return true
     }
 
-    //Generates a new wall
+    //Generates a new wall and plays a sound
     fun genWall(list: List<Position>): List<Position> {
 
         val newList = list.toMutableList()
@@ -94,6 +127,7 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
         }
 
         newList += new_w
+        playSound("snd/smb_kick")
 
         return newList
 
@@ -130,4 +164,15 @@ fun generateCornerPositions(): List<Position> {
         // Bottom-right corner
         Position(19, 15), Position(18, 15), Position(19, 14)
     )
+}
+
+//Utility function to read the highest score from a file, if it doesn't exist, it creates it
+fun readHighestScore(): Int {
+    val file = File("src/main/resources/highScore.txt")
+    if (!file.exists()) {
+        file.createNewFile()
+        file.writeText("0")
+        file.readText().toInt()
+    }
+    return file.readText().toInt()
 }

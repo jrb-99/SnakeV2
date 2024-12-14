@@ -7,38 +7,46 @@ fun main(){
     var iniGame = GameV2()
     val canvas = Canvas(WIDTH * CELL_SIZE, (HEIGHT + SCOREBOARD_HEIGHT) * CELL_SIZE, BLACK)
 
-    drawGame(canvas, iniGame)
-
-    //Listen to key events and update the snake position if allowed
-    canvas.onKeyPressed { k ->
-        val newDirection = when (k.code) {
-            UP_CODE -> Direction.UP
-            DOWN_CODE -> Direction.DOWN
-            LEFT_CODE -> Direction.LEFT
-            RIGHT_CODE -> Direction.RIGHT
-            else -> iniGame.snake.dir
-        }
-        if (iniGame.isDirectionChangeAllowed(newDirection) && iniGame.snake.dir.opposite() != newDirection) {
-            iniGame = GameV2(SnakeV2(iniGame.snake.body, newDirection, iniGame.snake.stopped, iniGame.snake.toGrow), iniGame.wall, iniGame.apple, iniGame.score)
-        }
-    }//onKeyPressed
-
-    canvas.onTimeProgress(REFRESH_RATE) {
-
-        iniGame = iniGame.advance()
         drawGame(canvas, iniGame)
 
+        //Listen to key events and update the snake position if allowed
+        canvas.onKeyPressed { k ->
+            val newDirection = when (k.code) {
+                UP_CODE -> Direction.UP
+                DOWN_CODE -> Direction.DOWN
+                LEFT_CODE -> Direction.LEFT
+                RIGHT_CODE -> Direction.RIGHT
+                else -> iniGame.snake.dir
+            }
+            //Check if the new direction is allowed and if it's not the opposite direction
+            if (iniGame.isDirectionChangeAllowed(newDirection) && iniGame.snake.dir.opposite() != newDirection) {
+                iniGame = GameV2(SnakeV2(iniGame.snake.body, newDirection, iniGame.snake.stopped, iniGame.snake.toGrow), iniGame.wall, iniGame.apple, iniGame.score)
+            }
+        }//onKeyPressed
 
-    }//onTimeProgress 250
+        canvas.onTimeProgress(REFRESH_RATE) {
 
-    canvas.onTimeProgress(WALL_REFRESH_RATE) {
-        iniGame = GameV2(iniGame.snake, iniGame.genWall(iniGame.wall), iniGame.apple, iniGame.score)
-    }//onTimeProgress 5000
+            iniGame = iniGame.advance()
+            drawGame(canvas, iniGame)
+
+
+        }//onTimeProgress 250
+
+        canvas.onTimeProgress(WALL_REFRESH_RATE) {
+            iniGame = GameV2(iniGame.snake, iniGame.genWall(iniGame.wall), iniGame.apple, iniGame.score)
+        }//onTimeProgress 5000
+
 
 }
 
 //Draws the game status
 fun drawGame(canvas: Canvas, game: GameV2) {
+
+    if(game.gameOver()){
+        game.endGameSound()
+        while (game.gameOver()){
+        }
+    }
 
     canvas.erase()
     drawGrid(canvas, WIDTH, HEIGHT, CELL_SIZE) //used for development purposes
@@ -63,14 +71,13 @@ fun drawGrid(canvas: Canvas, w: Int, h: Int, cs: Int) {
 
 //Draws the scoreboard
 fun drawScoreBoard(canvas: Canvas, game: GameV2) {
+
     canvas.drawRect(0, HEIGHT * CELL_SIZE, WIDTH * CELL_SIZE, SCOREBOARD_HEIGHT * CELL_SIZE, WHITE, 5)
     canvas.drawRect(0, HEIGHT * CELL_SIZE, WIDTH * CELL_SIZE, SCOREBOARD_HEIGHT * CELL_SIZE, BLACK)
-
     canvas.drawText(0, (HEIGHT + (SCOREBOARD_HEIGHT/2)) * CELL_SIZE, "Score: ${game.score}", RED, 20)
-    canvas.drawText(3 * CELL_SIZE, (HEIGHT + (SCOREBOARD_HEIGHT/2)) * CELL_SIZE, "Snake lenght: ${game.snake.body.size}", WHITE, 20)
-    canvas.drawText(9 * CELL_SIZE, (HEIGHT + (SCOREBOARD_HEIGHT/2)) * CELL_SIZE, game.endGameString(), YELLOW, 20)
+    canvas.drawText(4 * CELL_SIZE, (HEIGHT + (SCOREBOARD_HEIGHT/2)) * CELL_SIZE, "Snake length: ${game.snake.body.size}", WHITE, 20)
+    canvas.drawText(12 * CELL_SIZE, (HEIGHT + (SCOREBOARD_HEIGHT/2)) * CELL_SIZE, "Highest Score: ${game.highestScore}", WHITE, 20)
 
-    //timer(canvas)
 }
 
 //Draws the snake
