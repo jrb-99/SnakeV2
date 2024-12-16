@@ -7,47 +7,47 @@ fun main(){
     var iniGame = GameV2()
     val canvas = Canvas(WIDTH * CELL_SIZE, (HEIGHT + SCOREBOARD_HEIGHT) * CELL_SIZE, BLACK)
 
+    drawGame(canvas, iniGame)
+
+    //Listen to key events and update the snake position if allowed
+    canvas.onKeyPressed { k ->
+        val newDirection = when (k.code) {
+            UP_CODE -> Direction.UP
+            DOWN_CODE -> Direction.DOWN
+            LEFT_CODE -> Direction.LEFT
+            RIGHT_CODE -> Direction.RIGHT
+            else -> iniGame.snake.dir
+        }
+        //Check if the new direction is allowed and if it's not the opposite direction
+        if (iniGame.isDirectionChangeAllowed(newDirection) && iniGame.snake.dir.opposite() != newDirection) {
+            iniGame = GameV2(SnakeV2(iniGame.snake.body, newDirection, iniGame.snake.stopped, iniGame.snake.toGrow), iniGame.wall, iniGame.apple, iniGame.score, iniGame.highestScore, iniGame.status)
+        }
+    }//onKeyPressed
+
+    canvas.onTimeProgress(REFRESH_RATE) {
+
+        //While "true" loop was the only way found to stop periodic game execution...
+        while (iniGame.status == GameStatus.OVER){
+        //Restart game logic should be here
+        //Problems trying to find ways to stop refresh rate while game is over
+        //"Caso seja útil
+        //pode ser usado o objeto retornado, do tipo TimerCtrl, que tem a função stop para permitir parar a
+        //execução periódica." -> this didn't work as expected..
+        }
+
+        iniGame = iniGame.advance()
         drawGame(canvas, iniGame)
+    }//onTimeProgress 250
 
-        //Listen to key events and update the snake position if allowed
-        canvas.onKeyPressed { k ->
-            val newDirection = when (k.code) {
-                UP_CODE -> Direction.UP
-                DOWN_CODE -> Direction.DOWN
-                LEFT_CODE -> Direction.LEFT
-                RIGHT_CODE -> Direction.RIGHT
-                else -> iniGame.snake.dir
-            }
-            //Check if the new direction is allowed and if it's not the opposite direction
-            if (iniGame.isDirectionChangeAllowed(newDirection) && iniGame.snake.dir.opposite() != newDirection) {
-                iniGame = GameV2(SnakeV2(iniGame.snake.body, newDirection, iniGame.snake.stopped, iniGame.snake.toGrow), iniGame.wall, iniGame.apple, iniGame.score)
-            }
-        }//onKeyPressed
-
-        canvas.onTimeProgress(REFRESH_RATE) {
-
-            iniGame = iniGame.advance()
-            drawGame(canvas, iniGame)
-
-
-        }//onTimeProgress 250
-
-        canvas.onTimeProgress(WALL_REFRESH_RATE) {
-            iniGame = GameV2(iniGame.snake, iniGame.genWall(iniGame.wall), iniGame.apple, iniGame.score)
-        }//onTimeProgress 5000
+    canvas.onTimeProgress(WALL_REFRESH_RATE) {
+        iniGame = GameV2(iniGame.snake, iniGame.genWall(iniGame.wall), iniGame.apple, iniGame.score, iniGame.highestScore, iniGame.status)
+    }//onTimeProgress 5000
 
 
 }
 
 //Draws the game status and checks if the game is over
 fun drawGame(canvas: Canvas, game: GameV2) {
-
-    if(game.gameOver()){
-        game.endGameSound()
-        while (game.gameOver()){
-            //Restart game logic
-        }
-    }
 
     canvas.erase()
     drawGrid(canvas, WIDTH, HEIGHT, CELL_SIZE) //used for development purposes

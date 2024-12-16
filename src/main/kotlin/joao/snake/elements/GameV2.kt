@@ -4,23 +4,25 @@ import pt.isel.canvas.playSound
 import java.io.File
 
 //Game constants (Can be an enum)
-const val WIDTH = 30
-const val HEIGHT = 20
+const val WIDTH = 20
+const val HEIGHT = 16
 const val SCOREBOARD_HEIGHT = 2
 const val CELL_SIZE = 32
 const val REFRESH_RATE = 250//3000
 const val WALL_REFRESH_RATE = 5000
 const val GROW_RATE = 5
 const val PPA = 1 //PPA: Points per Apple
+const val MIN_SCORE = 11
+const val DEFAULT_HIGHSCORE = "0"
 const val SND_BUMP = "snd/smb_bump"
 const val SND_EAT = "snd/smb_powerup"
 const val SND_BRICK = "snd/smb_kick"
 const val SND_WIN = "snd/smb_stage_clear"
 const val SND_LOSE = "snd/smb_gameover"
 const val SND_NEW_HIGH = "snd/smb_world_clear"
-const val SCORE_FILE = "src/main/resources/highScore.txt"
+const val SCORE_FILE = "src/main/resources/save/highScore.txt"
 
-data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = generateCornerPositions(), val apple: Position? = null, val score: Int = 0, val highestScore: Int = readHighestScore()) {
+data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = generateCornerPositions(), val apple: Position? = null, val score: Int = 0, val highestScore: Int = readHighestScore(), val status: GameStatus = GameStatus.START) {
 
     //Returns the next game status, checking if the snake has hit a wall
     fun advance(): GameV2 {
@@ -28,25 +30,35 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
         //Check collision with wall
         if(wall.contains(snake.nextPos(snake.body[0], snake.dir))){
             playSound(SND_BUMP)
-            return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall, apple, score, highestScore)
+            return status(SnakeV2(snake.body, snake.dir, true, snake.toGrow))
         }
 
         //Check collision with snake body
         if(snake.body.subList(1, snake.body.size).contains(snake.nextPos(snake.body[0], snake.dir))){
             playSound(SND_BUMP)
-            return GameV2(SnakeV2(snake.body, snake.dir, true, snake.toGrow), wall, apple, score, highestScore)
+            return status(SnakeV2(snake.body, snake.dir, true, snake.toGrow))
         }
 
         //Return growing snake or current snake
         val snk = snakeType().move(snake.dir)
 
-        //Return game status if snake eats an apple
-        if(snake.body[0] == apple){
-            return GameV2(snk, wall, null, score + PPA, highestScore)
+        return status(snk)
+    }
+
+    //Returns the game status depending on the snake condition
+    fun status(snk: SnakeV2): GameV2{
+
+        if(gameOver()){
+            endGameSound()
+            return GameV2(snk, wall, apple, score, highestScore, GameStatus.OVER)
         }
 
-        //Return game status if snake doesn't eat any apple
-        return GameV2(snk, wall, genApple(), score)
+        if(snake.body[0] == apple){
+            return GameV2(snk, wall, null, score + PPA, highestScore, GameStatus.RUNNING)
+        }
+
+        return GameV2(snk, wall, genApple(), score, highestScore, GameStatus.RUNNING)
+
     }
 
     //Returns snake type (has eaten apple or not)
@@ -70,23 +82,13 @@ data class GameV2(val snake: SnakeV2 = SnakeV2(), val wall: List<Position> = gen
         return !snake.body.contains(nextPosition) && !wall.contains(nextPosition)
     }
 
-    //Returns the end game string based on the score
-    fun endGameString(): String{
-        if(gameOver() && score >= 11) {
-            return "You won"
-        } else if(gameOver() && score < 11){
-            return "You lost"
-        }
-        return ""
-    }
-
     //Plays a sound based on the end game result
     fun endGameSound(){
         if(gameOver() && score >= highestScore){
             playSound(SND_NEW_HIGH)
-        }else if(gameOver() && score >= 11) {
+        }else if(gameOver() && score >= MIN_SCORE) {
             playSound(SND_WIN)
-        }else if(gameOver() && score < 11){
+        }else if(gameOver() && score < MIN_SCORE){
             playSound(SND_LOSE)
         }
     }
@@ -176,7 +178,7 @@ fun readHighestScore(): Int {
     val file = File(SCORE_FILE)
     if (!file.exists()) {
         file.createNewFile()
-        file.writeText("0")
+        file.writeText(DEFAULT_HIGHSCORE)
         file.readText().toInt()
     }
     return file.readText().toInt()
