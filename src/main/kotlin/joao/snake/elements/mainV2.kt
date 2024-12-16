@@ -39,12 +39,13 @@ fun main(){
 
 }
 
-//Draws the game status
+//Draws the game status and checks if the game is over
 fun drawGame(canvas: Canvas, game: GameV2) {
 
     if(game.gameOver()){
         game.endGameSound()
         while (game.gameOver()){
+            //Restart game logic
         }
     }
 
